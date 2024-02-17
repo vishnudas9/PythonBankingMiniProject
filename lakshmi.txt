@@ -1,0 +1,13 @@
+username: lakshmi
+firstname: Jyothi
+lastname: Lakshmi
+dob: 11/11/1996
+mobile: 0123456788
+accno: 15554587779
+address: Thrissur
+password: 987654
+aadhar: 123456789013
+pan: ABCDE1234G
+balance: 2000
+blocked: 0
+pin: 5634
