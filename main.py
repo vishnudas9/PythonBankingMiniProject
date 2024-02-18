@@ -11,21 +11,21 @@ def create_test_data():
     _user_data_dict = {'username': 'vishnu', 'firstname': 'Vishnudas', 'lastname': 'A', 'dob': '27/10/1992',
                        'mobile': '0123456789', 'accno': '15554587778',
                        'address': 'Thrissur', 'password': '123456', 'aadhar': 123456789012, 'pan': 'ABCDE1234F',
-                       'balance': 1000, 'blocked': 0, 'pin' : 1234}
+                       'balance': 1000, 'blocked': 0, 'pin': 1234}
     store_user_to_file(_user_data_dict, _user_data_dict['username'])
 
     # user 2
     _user_data_dict = {'username': 'lakshmi', 'firstname': 'Jyothi', 'lastname': 'Lakshmi', 'dob': '11/11/1996',
                        'mobile': '0123456788', 'accno': '15554587779',
                        'address': 'Thrissur', 'password': '987654', 'aadhar': 123456789013, 'pan': 'ABCDE1234G',
-                       'balance': 2000, 'blocked': 0, 'pin' : 5634}
+                       'balance': 2000, 'blocked': 0, 'pin': 5634}
     store_user_to_file(_user_data_dict, _user_data_dict['username'])
 
     # user 3
     _user_data_dict = {'username': 'vihaan', 'firstname': 'Vihaan', 'lastname': 'A', 'dob': '07/05/2021',
                        'mobile': '0123456787', 'accno': '25554587778',
                        'address': 'Thrissur', 'password': '101010', 'aadhar': 123456789014, 'pan': 'ABCDE1234F',
-                       'balance': 3000, 'blocked': 0, 'pin' : 2468}
+                       'balance': 3000, 'blocked': 0, 'pin': 2468}
     store_user_to_file(_user_data_dict, _user_data_dict['username'])
 
 
@@ -93,7 +93,6 @@ def check_balance_info():
             print_invalid_input_message()
 
 
-
 def withdraw_amount():
     current_bal = float(_user_data['balance'])
     print("- - - -- - - - -Withdraw Cash- - - - -- - - - - -")
@@ -106,17 +105,22 @@ def withdraw_amount():
                 if amount > current_bal:
                     print("Withdrawal amount cannot be higher than available balance!")
                 else:
-                    current_bal = current_bal - amount
-                    print("Success! New balance amount is : " + str(current_bal))
-                    _user_data['balance'] = current_bal
-                    update_balance(_user_data, _user_data['username'])
                     while True:
-                        goback = input("* Enter E to go back to Main menu : ")
-                        if goback.upper() == "E":
-                            clear_screen()
-                            print_main_menu()
+                        pin = str(input("Enter 4 digit transaction security pin : "))
+                        if len(pin) == 4 and str(pin) == str(_user_data['pin']):
+                            current_bal = current_bal - amount
+                            print("Success! New balance amount is : " + str(current_bal))
+                            _user_data['balance'] = current_bal
+                            update_data(_user_data, _user_data['username'])
+                            while True:
+                                goback = input("* Enter E to go back to Main menu : ")
+                                if goback.upper() == "E":
+                                    clear_screen()
+                                    print_main_menu()
+                                else:
+                                    print_invalid_input_message()
                         else:
-                            print_invalid_input_message()
+                            print("Incorrect PIN entered!")
             else:
                 print_invalid_input_message()
 
@@ -137,7 +141,7 @@ def deposit_amount():
                 current_bal = current_bal + amount
                 print("Success! New balance amount is : " + str(current_bal))
                 _user_data['balance'] = current_bal
-                update_balance(_user_data, _user_data['username'])
+                update_data(_user_data, _user_data['username'])
                 while True:
                     goback = input("* Enter E to go back to Main menu : ")
                     if goback.upper() == "E":
@@ -173,11 +177,11 @@ def transfer_amount():
                             if len(ifsc_code) >= 6:
                                 while True:
                                     pin = str(input("Enter 4 digit transaction security pin : "))
-                                    if len(pin) == 4:
+                                    if len(pin) == 4 and str(pin) == str(_user_data['pin']):
                                         current_bal = current_bal - amount
                                         print("Money Transferred! New balance amount is : " + str(current_bal))
                                         _user_data['balance'] = current_bal
-                                        update_balance(_user_data, _user_data['username'])
+                                        update_data(_user_data, _user_data['username'])
                                         while True:
                                             goback = input("* Enter E to go back to Main menu : ")
                                             if goback.upper() == "E":
@@ -186,7 +190,7 @@ def transfer_amount():
                                             else:
                                                 print_invalid_input_message()
                                     else:
-                                        print("Invalid pin!")
+                                        print("Incorrect pin entered!")
                             else:
                                 print("Invalid IFSC Code")
                     else:
@@ -195,6 +199,64 @@ def transfer_amount():
         print("Something went wrong! Please try again")
         transfer_amount()
 
+def change_pin():
+    print("- - - - - - - - Change PIN - - - - - - - - -")
+    while True:
+        current_pin = input("Enter the current PIN : ")
+        if current_pin == str(_user_data['pin']):
+            while True:
+                new_pin = input("Enter New PIN : ")
+                if len(new_pin) == 4:
+                    while True:
+                        re_new_pin = input("Re-Enter New PIN : ")
+                        if new_pin == re_new_pin:
+                            print("PIN Changed Successfully!")
+                            _user_data['pin'] = new_pin
+                            update_data(_user_data, _user_data['username'])
+                            while True:
+                                goback = input("* Enter E to go back to Main menu : ")
+                                if goback.upper() == "E":
+                                    clear_screen()
+                                    print_main_menu()
+                                else:
+                                    print_invalid_input_message()
+                        else:
+                            print("Re-entered PIN Numbers are not matching. Please try again.")
+                else:
+                    print("PIN number should be in 4 digits")
+        else:
+            print("Incorrect PIN!")
+
+
+def change_password():
+    print("- - - - - - - - Change Password- - - - - - - - -")
+    while True:
+        current_password = input("Enter the current Password : ")
+        if current_password == str(_user_data['password']):
+            while True:
+                new_password = input("Enter New Password : ")
+                if len(new_password) >= 6:
+                    while True:
+                        re_new_password = input("Re-Enter New Password : ")
+                        if new_password == re_new_password:
+                            print("Password Changed Successfully!")
+                            _user_data['password'] = new_password
+                            update_data(_user_data, _user_data['username'])
+                            while True:
+                                goback = input("* Enter E to go back to Main menu : ")
+                                if goback.upper() == "E":
+                                    clear_screen()
+                                    print_main_menu()
+                                else:
+                                    print_invalid_input_message()
+                        else:
+                            print("Re-entered Password are not matching. Please try again.")
+                else:
+                    print("Password number should be greater than 6 digits")
+        else:
+            print("Incorrect Password!")
+
+
 def print_main_menu():
     print("- - - - - - - - - Main Menu- - - - - - - - - - -")
     print("1. Balance Check")
@@ -202,7 +264,9 @@ def print_main_menu():
     print("3. Transfer Fund")
     print("4. Deposit Fund")
     print("5. My Profile")
-    print("6. Logout")
+    print("6. Change PIN")
+    print("7. Change Password")
+    print("8. Logout")
     print("- - - - - - - - - - - - - -- - - - - - - - - - -")
     option = int(input("Enter your choice to continue:"))
 
@@ -218,6 +282,10 @@ def print_main_menu():
     elif option == 5:
         print_profile_info()
     elif option == 6:
+        change_pin()
+    elif option == 7:
+        change_password()
+    elif option == 8:
         print_logout_message()
 
 
@@ -267,7 +335,7 @@ def user_login():
         print_maxlimit_warning()
 
 
-def update_balance(dictionary, username):
+def update_data(dictionary, username):
     try:
         with open(username + '.txt', 'w') as file:
             for key, value in dictionary.items():
@@ -306,7 +374,7 @@ def load_users_from_file(username):
 
 
 # CODE EXECUTION BEGINS HERE
-# create_test_data()
+create_test_data()
 print_welcome_message()
 print_login_message()
 user_login()
